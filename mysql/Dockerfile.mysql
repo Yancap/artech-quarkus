@@ -1,0 +1,11 @@
+FROM mysql
+
+
+#Diretório responsável por rodar scripts de banco de dados
+COPY init.sql /docker-entrypoint-initdb.d/
+
+
+EXPOSE 3306
+
+
+# VOLUME [ "mysql-volume:/var/lib/mysql/" ]

@@ -1,0 +1,104 @@
+version: "3.7"
+services:
+  artech_cms:
+    container_name: artech_cms
+    build: 
+      context: ./artech-cms-api/
+      dockerfile: ./src/main/docker/Dockerfile.jvm
+      args:
+        - DB_USERNAME=root
+        - DB_PASSWORD=root
+        - DB_URL=jdbc:mysql://mysql_artech:3306/artech
+        - QUARKUS_HTTP_PORT=8081
+    environment:
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - DB_URL=jdbc:mysql://mysql_artech:3306/artech
+      - QUARKUS_HTTP_PORT=8081
+    networks:
+      - database_connection
+      - artech_network
+    depends_on:
+      - mysql_artech
+    ports:
+      - "8081:8081"
+  artech_client:
+    container_name: artech_client
+    build: 
+      context: ./artech-client-api/
+      dockerfile: ./src/main/docker/Dockerfile.jvm
+      args:
+        - DB_USERNAME=root
+        - DB_PASSWORD=root
+        - DB_URL=jdbc:mysql://mysql_artech:3306/artech
+        - QUARKUS_HTTP_PORT=8082
+    environment:
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+      - DB_URL=jdbc:mysql://mysql_artech:3306/artech
+      - QUARKUS_HTTP_PORT=8082
+    ports:
+      - "8082:8082"
+    networks:
+      - database_connection
+      - artech_network
+    depends_on:
+      - mysql_artech
+  mysql_artech:
+    container_name: mysql_artech
+    #image: mysql
+    build: 
+      context: ./mysql/
+      dockerfile: ./Dockerfile.mysql
+    environment:
+      # MYSQL_DATABASE: artech
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    #volumes:
+      # - mysql-volume:/var/lib/mysql
+      #- ./mysql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - database_connection
+  
+  ngix_gateway:
+    container_name: ngix_gateway
+    build: 
+      context: ./ngix/
+      dockerfile: ./Dockerfile
+    networks:
+      - artech_network
+    depends_on:
+      - artech_client
+      - artech_cms
+    ports:
+      - "80:80"
+
+
+  # jaeger_artech:
+  #   container_name: jaeger_artech
+  #   image: jaegertracing/all-in-one:1.6.0
+  #   ports:
+  #     - "5775:5775/udp"
+  #     - "6831:6831/udp"
+  #     - "6832:6832/udp"
+  #     - "5778:5778"
+  #     - "16686:16686"
+  #     - "14268:14268"
+  #     - "9411:9411"
+  # prometheus_artech:
+  #   container_name: prometheus_artech
+  #   image: prometheus-artech
+  #   network_mode: host
+  # grafana_artech:
+  #   container_name: grafana_artech
+  #   image: grafana/grafana
+  #   network_mode: host
+# volumes:
+#   mysql-volume:
+#     driver: local
+networks:
+  database_connection:
+    driver: bridge
+  artech_network:
+    driver: bridge
