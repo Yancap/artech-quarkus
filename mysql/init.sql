@@ -49,7 +49,7 @@ CREATE TABLE articles (
   image_url varchar(255) DEFAULT NULL,
   slug varchar(255) DEFAULT NULL,
   subtitle varchar(255) DEFAULT NULL,
-  text varchar(255) DEFAULT NULL,
+  text MEDIUMTEXT DEFAULT NULL,
   title varchar(255) DEFAULT NULL,
   PRIMARY KEY (id),
   KEY FK7i4rryg7kqwyyrr08temnc71e (category_id),

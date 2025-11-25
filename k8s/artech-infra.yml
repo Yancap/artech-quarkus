@@ -1,0 +1,99 @@
+# Esse arquivo contém NAMESPACE, DEPLOYMENT e SERVICE
+
+#ARTECH - Namespace
+apiVersion: v1 
+kind: Namespace 
+metadata:
+  name: artech
+
+---
+
+#ARTECH - Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: artech-ingress
+  namespace: artech
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: / # reescrita simples
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: artech.cms.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: artech-cms
+                port:
+                  number: 80
+    # - host: artech.client.local
+    #   http:
+    #     paths:
+    #       - path: /
+    #         pathType: Exact
+    #         backend:
+    #           service:
+    #             name: artech-client
+    #             port:
+    #               number: 80
+          # - path: /client
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: artech-client
+          #       port:
+          #         number: 8082
+
+---
+
+#ARTECH CMS - Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artech-cms
+  namespace: artech
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: artech-cms
+  template:
+    metadata:
+      labels:
+        app: artech-cms
+    spec:
+      containers:
+        - name: artech-cms
+          image: yan22345/artech-cms-api:1.0.3
+          env: 
+          - name: DB_USERNAME
+            value: "root"
+          - name: DB_PASSWORD
+            value: "root"
+          - name: DB_URL
+            value: "jdbc:mysql://mysql:3306/artech"
+          - name: QUARKUS_HTTP_PORT
+            value: "8081"
+          ports:
+          - containerPort: 8081
+            name: artech-cms
+
+---
+
+#ARTECH CMS - Sevice
+apiVersion: v1
+kind: Service
+metadata:
+  name: artech-cms
+  namespace: artech
+spec:
+  selector:
+    app: artech-cms
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8081
+  type: LoadBalancer

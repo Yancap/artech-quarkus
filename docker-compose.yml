@@ -1,4 +1,3 @@
-version: "3.7"
 services:
   artech_cms:
     container_name: artech_cms

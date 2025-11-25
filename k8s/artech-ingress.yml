@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: artech-ingress
+  namespace: artech
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /   # reescrita simples
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: artech.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: artech-cms
+                port:
+                  number: 80
+          # - path: /q/swagger-ui
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: artech-cms
+          #       port:
+          #         number: 80
+          # - path: /client
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: artech-client
+          #       port:
+          #         number: 8081
