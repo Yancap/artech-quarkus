@@ -8,4 +8,5 @@ Fazer as configurações para prod
 
 Configurar o Kubernetes para o Artech_CMS e testar
   [x] Descobrir o motivo do problema ImagePullBackOff, verificando as variaveis de ambiente
-  [] Configurar o MySQL no Kubernetes para o POD acessar
+  [x] Anotar sonre o Ingress e como configurar localmente
+  [x] Configurar o MySQL no Kubernetes para o POD acessar 

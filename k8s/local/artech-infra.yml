@@ -1,13 +1,12 @@
 # Esse arquivo contém NAMESPACE, DEPLOYMENT e SERVICE
 
 #ARTECH - Namespace
-apiVersion: v1 
-kind: Namespace 
+apiVersion: v1
+kind: Namespace
 metadata:
   name: artech
 
 ---
-
 #ARTECH - Ingress
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -15,15 +14,17 @@ metadata:
   name: artech-ingress
   namespace: artech
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: / # reescrita simples
+    nginx.ingress.kubernetes.io/rewrite-target: /$2 # reescrita simples
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
 spec:
   ingressClassName: nginx
   rules:
-    - host: artech.cms.local
+    - host: artech.local
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: /cms(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: artech-cms
@@ -39,16 +40,15 @@ spec:
     #             name: artech-client
     #             port:
     #               number: 80
-          # - path: /client
-          #   pathType: Prefix
-          #   backend:
-          #     service:
-          #       name: artech-client
-          #       port:
-          #         number: 8082
+    # - path: /client
+    #   pathType: Prefix
+    #   backend:
+    #     service:
+    #       name: artech-client
+    #       port:
+    #         number: 8082
 
 ---
-
 #ARTECH CMS - Deployment
 apiVersion: apps/v1
 kind: Deployment
@@ -68,21 +68,20 @@ spec:
       containers:
         - name: artech-cms
           image: yan22345/artech-cms-api:1.0.3
-          env: 
-          - name: DB_USERNAME
-            value: "root"
-          - name: DB_PASSWORD
-            value: "root"
-          - name: DB_URL
-            value: "jdbc:mysql://mysql:3306/artech"
-          - name: QUARKUS_HTTP_PORT
-            value: "8081"
+          env:
+            - name: DB_USERNAME
+              value: "root"
+            - name: DB_PASSWORD
+              value: "root"
+            - name: DB_URL
+              value: "jdbc:mysql://mysql:3306/artech"
+            - name: QUARKUS_HTTP_PORT
+              value: "8081"
           ports:
-          - containerPort: 8081
-            name: artech-cms
+            - containerPort: 8081
+              name: artech-cms
 
 ---
-
 #ARTECH CMS - Sevice
 apiVersion: v1
 kind: Service
@@ -96,4 +95,6 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 8081
-  type: LoadBalancer
+  type: ClusterIP
+
+

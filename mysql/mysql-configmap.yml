@@ -2,7 +2,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mysql-init-scripts
-data:
+  namespace: artech
+data: #Configuração via arquivo
+
+   #nome-arquivo.extenção: <conteudo>
   init.sql: |
     CREATE SCHEMA IF NOT EXISTS artech;
 
@@ -206,8 +209,3 @@ data:
 
     -- article_id = 6
     INSERT INTO comments (article_id, created_at, user_id, text) VALUES (6, NOW(), 100, 'Comentário 6-1');
-
-
-
-
-  

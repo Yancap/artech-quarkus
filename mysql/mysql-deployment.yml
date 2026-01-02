@@ -2,10 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql
+  namespace: artech
 spec:
   selector:
     matchLabels:
-      app: mysql
+      app: mysql 
   template:
     metadata:
       labels:
@@ -14,17 +15,17 @@ spec:
       containers:
         - name: mysql
           image: mysql:8.0
+          resources:
+            requests:
+              cpu: 10m
+            limits:
+              cpu: 100m
           ports:
             - containerPort: 3306
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: root
-            # - name: MYSQL_USER
-            #   value:
-            # - name: MYSQL_PASSWORD
-            #   value:
-            # - name: MYSQL_DATABASE
-            #   value:
+            
           volumeMounts:
             - name: initdb
               mountPath: /docker-entrypoint-initdb.d
@@ -32,11 +33,15 @@ spec:
         - name: initdb
           configMap:
             name: mysql-init-scripts
+            items: # Removivel
+            - key: "init.sql" # Removivel
+              path: "init.sql" # Removivel
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: mysql
+  namespace: artech
 spec:
   type: ClusterIP
   ports:

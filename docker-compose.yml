@@ -1,6 +1,7 @@
 services:
   artech_cms:
     container_name: artech_cms
+    user: root
     build: 
       context: ./artech-cms-api/
       dockerfile: ./src/main/docker/Dockerfile.jvm
@@ -21,8 +22,12 @@ services:
       - mysql_artech
     ports:
       - "8081:8081"
+    volumes:
+      - cms_storage:/deployments/storage/images/articles
+      - cms_storage:/deployments/storage/images/management
   artech_client:
     container_name: artech_client
+    user: root
     build: 
       context: ./artech-client-api/
       dockerfile: ./src/main/docker/Dockerfile.jvm
@@ -43,6 +48,9 @@ services:
       - artech_network
     depends_on:
       - mysql_artech
+    volumes:
+      - client_storage:/deployments/storage/images/users
+
   mysql_artech:
     container_name: mysql_artech
     #image: mysql
@@ -73,29 +81,10 @@ services:
     ports:
       - "80:80"
 
+volumes: 
+  client_storage: {}
+  cms_storage: {}
 
-  # jaeger_artech:
-  #   container_name: jaeger_artech
-  #   image: jaegertracing/all-in-one:1.6.0
-  #   ports:
-  #     - "5775:5775/udp"
-  #     - "6831:6831/udp"
-  #     - "6832:6832/udp"
-  #     - "5778:5778"
-  #     - "16686:16686"
-  #     - "14268:14268"
-  #     - "9411:9411"
-  # prometheus_artech:
-  #   container_name: prometheus_artech
-  #   image: prometheus-artech
-  #   network_mode: host
-  # grafana_artech:
-  #   container_name: grafana_artech
-  #   image: grafana/grafana
-  #   network_mode: host
-# volumes:
-#   mysql-volume:
-#     driver: local
 networks:
   database_connection:
     driver: bridge
