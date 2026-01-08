@@ -22,9 +22,9 @@ services:
       - mysql_artech
     ports:
       - "8081:8081"
-    volumes:
-      - cms_storage:/deployments/storage/images/articles
-      - cms_storage:/deployments/storage/images/management
+    #volumes:
+      #- cms_storage:/deployments/storage/images/articles
+      #- cms_storage:/deployments/storage/images/management
   artech_client:
     container_name: artech_client
     user: root
@@ -83,7 +83,7 @@ services:
 
 volumes: 
   client_storage: {}
-  cms_storage: {}
+  #cms_storage: {}
 
 networks:
   database_connection:

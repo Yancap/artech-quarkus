@@ -30,23 +30,17 @@ spec:
                 name: artech-cms
                 port:
                   number: 80
-    # - host: artech.client.local
-    #   http:
-    #     paths:
-    #       - path: /
-    #         pathType: Exact
-    #         backend:
-    #           service:
-    #             name: artech-client
-    #             port:
-    #               number: 80
-    # - path: /client
-    #   pathType: Prefix
-    #   backend:
-    #     service:
-    #       name: artech-client
-    #       port:
-    #         number: 8082
+    - host: artech.local
+      http:
+        paths:
+          - path: /client(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: artech-client
+                port:
+                  number: 80
+    
 
 ---
 #ARTECH CMS - Deployment
@@ -67,21 +61,98 @@ spec:
     spec:
       containers:
         - name: artech-cms
-          image: yan22345/artech-cms-api:1.0.3
+          image: yan22345/artech-cms-api:1.1.2
           env:
             - name: DB_USERNAME
               value: "root"
             - name: DB_PASSWORD
               value: "root"
             - name: DB_URL
-              value: "jdbc:mysql://mysql:3306/artech"
+              value: "jdbc:mysql://artech-database:3306/artech"
+            - name: QUARKUS_HTTP_PORT
+              value: "8080"
+          ports:
+            - containerPort: 8080
+              name: artech-cms
+      #     volumeMounts:
+      #       - name: artech-pvc
+      #         mountPath: /deployment/storage
+      # volumes:
+      #   - name: artech-pvc
+      #     persistentVolumeClaim:
+      #       claimName: artech-pvc
+        
+        
+
+---
+
+#ARTECH CLIENT - Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artech-client
+  namespace: artech
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: artech-client
+  template:
+    metadata:
+      labels:
+        app: artech-client
+    spec:
+      containers:
+        - name: artech-client
+          image: yan22345/artech-client-api:1.0.2
+          env:
+            - name: DB_USERNAME
+              value: "root"
+            - name: DB_PASSWORD
+              value: "root"
+            - name: DB_URL
+              value: "jdbc:mysql://artech-database:3306/artech"
             - name: QUARKUS_HTTP_PORT
               value: "8081"
           ports:
             - containerPort: 8081
-              name: artech-cms
+              name: artech-client
+      #     volumeMounts:
+      #       - name: artech-pvc
+      #         mountPath: /deployment/storage
+      # volumes:
+      #   - name: artech-pvc
+      #     persistentVolumeClaim:
+      #       claimName: artech-pvc 
+            
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artech-database
+  namespace: artech
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: artech-database
+  template:
+    metadata:
+      labels:
+        app: artech-database
+    spec:
+      containers:
+        - name: artech-database
+          image: yan22345/artech-database:1.0.4
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root
 
 ---
+
 #ARTECH CMS - Sevice
 apiVersion: v1
 kind: Service
@@ -94,7 +165,39 @@ spec:
   ports:
     - protocol: TCP
       port: 80
+      targetPort: 8080
+  type: ClusterIP
+
+---
+
+#ARTECH CLIENT - Sevice
+apiVersion: v1
+kind: Service
+metadata:
+  name: artech-client
+  namespace: artech
+spec:
+  selector:
+    app: artech-client
+  ports:
+    - protocol: TCP
+      port: 80
       targetPort: 8081
   type: ClusterIP
 
+---
+
+#ARTECH DATABASE - Sevice
+apiVersion: v1
+kind: Service
+metadata:
+  name: artech-database
+  namespace: artech
+spec:
+  selector:
+    app: artech-database
+  ports:
+    - port: 3306
+      targetPort: 3306
+  type: ClusterIP
 

@@ -18,3 +18,10 @@ spec:
                 name: artech-cms
                 port:
                   number: 80
+          - path: /client(/|$)(.*)
+            pathType: ImplementationSpecific 
+            backend:
+              service:
+                name: artech-client
+                port:
+                  number: 80

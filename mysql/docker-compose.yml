@@ -1,11 +1,11 @@
 services:
   
-  mysql_artech_server:
-    container_name: mysql_artech_server
-    image: yan22345/artech-database:1.0.0
-    # build: 
-    #   context: ../mysql/
-    #   dockerfile: ./Dockerfile.mysql
+  mysql_artech123:
+    container_name: mysql_artech123
+    #image: yan22345/artech-database:1.0.0
+    build: 
+      context: .
+      dockerfile: ./Dockerfile.mysql
     environment:
       # MYSQL_DATABASE: artech
       MYSQL_ROOT_PASSWORD: root

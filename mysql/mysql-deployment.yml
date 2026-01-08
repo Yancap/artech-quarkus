@@ -29,6 +29,7 @@ spec:
           volumeMounts:
             - name: initdb
               mountPath: /docker-entrypoint-initdb.d
+              subPath: docker-entrypoint-initdb.d 
       volumes:
         - name: initdb
           configMap:
