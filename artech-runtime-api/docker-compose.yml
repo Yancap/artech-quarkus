@@ -1,0 +1,15 @@
+version: "3.7"
+services:
+  mysql_cms:
+    container_name: mysql_cms_artech
+    image: mysql
+    environment:
+      MYSQL_DATABASE: artechCms
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-volume:/var/lib/mysql
+volumes:
+  mysql-volume:
+    driver: local

@@ -1,55 +1,79 @@
 services:
-  artech_cms:
-    container_name: artech_cms
-    user: root
-    build: 
-      context: ./artech-cms-api/
-      dockerfile: ./src/main/docker/Dockerfile.jvm
-      args:
-        - DB_USERNAME=root
-        - DB_PASSWORD=root
-        - DB_URL=jdbc:mysql://mysql_artech:3306/artech
-        - QUARKUS_HTTP_PORT=8081
-    environment:
-      - DB_USERNAME=root
-      - DB_PASSWORD=root
-      - DB_URL=jdbc:mysql://mysql_artech:3306/artech
-      - QUARKUS_HTTP_PORT=8081
-    networks:
-      - database_connection
-      - artech_network
-    depends_on:
-      - mysql_artech
-    ports:
-      - "8081:8081"
+  # artech_cms:
+  #   container_name: artech_cms
+  #   user: root
+  #   build: 
+  #     context: ./artech-cms-api/
+  #     dockerfile: ./src/main/docker/Dockerfile.jvm
+  #     args:
+  #       - DB_USERNAME=root
+  #       - DB_PASSWORD=root
+  #       - DB_URL=jdbc:mysql://mysql_artech:3306/artech
+  #       - QUARKUS_HTTP_PORT=8081
+  #   environment:
+  #     - DB_USERNAME=root
+  #     - DB_PASSWORD=root
+  #     - DB_URL=jdbc:mysql://mysql_artech:3306/artech
+  #     - QUARKUS_HTTP_PORT=8081
+  #   networks:
+  #     - database_connection
+  #     - artech_network
+  #   depends_on:
+  #     - mysql_artech
+  #   ports:
+  #     - "8081:8081"
     #volumes:
       #- cms_storage:/deployments/storage/images/articles
       #- cms_storage:/deployments/storage/images/management
-  artech_client:
-    container_name: artech_client
+  # artech_client:
+  #   container_name: artech_client
+  #   user: root
+  #   build: 
+  #     context: ./artech-client-api/
+  #     dockerfile: ./src/main/docker/Dockerfile.jvm
+  #     args:
+  #       - DB_USERNAME=root
+  #       - DB_PASSWORD=root
+  #       - DB_URL=jdbc:mysql://mysql_artech:3306/artech
+  #       - QUARKUS_HTTP_PORT=8082
+  #   environment:
+  #     - DB_USERNAME=root
+  #     - DB_PASSWORD=root
+  #     - DB_URL=jdbc:mysql://mysql_artech:3306/artech
+  #     - QUARKUS_HTTP_PORT=8082
+  #   ports:
+  #     - "8082:8082"
+  #   networks:
+  #     - database_connection
+  #     - artech_network
+  #   depends_on:
+  #     - mysql_artech
+  #   volumes:
+  #     - client_storage:/deployments/storage/images/users
+  artech_runtime_api:
+    container_name: artech-runtime-api
     user: root
     build: 
-      context: ./artech-client-api/
+      context: ./artech-runtime-api/
       dockerfile: ./src/main/docker/Dockerfile.jvm
       args:
         - DB_USERNAME=root
         - DB_PASSWORD=root
         - DB_URL=jdbc:mysql://mysql_artech:3306/artech
-        - QUARKUS_HTTP_PORT=8082
+        - QUARKUS_HTTP_PORT=8080
     environment:
       - DB_USERNAME=root
       - DB_PASSWORD=root
       - DB_URL=jdbc:mysql://mysql_artech:3306/artech
-      - QUARKUS_HTTP_PORT=8082
+      - QUARKUS_HTTP_PORT=8080
     ports:
-      - "8082:8082"
+      - "8080:8080"
     networks:
       - database_connection
       - artech_network
     depends_on:
       - mysql_artech
-    volumes:
-      - client_storage:/deployments/storage/images/users
+    
 
   mysql_artech:
     container_name: mysql_artech
@@ -76,14 +100,11 @@ services:
     networks:
       - artech_network
     depends_on:
-      - artech_client
-      - artech_cms
+      # - artech_client
+      # - artech_cms
+      - artech_runtime_api
     ports:
       - "80:80"
-
-volumes: 
-  client_storage: {}
-  #cms_storage: {}
 
 networks:
   database_connection:

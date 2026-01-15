@@ -1,15 +1,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.example</groupId>
-  <artifactId>artech-quarkus</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>Archetype - artech-quarkus</name>
+  <groupId>com.github.yancap.artech</groupId>
+  <artifactId>artech-quarkus-api</artifactId>
+  <version>1.0.0</version>
+  <name>artech-quarkus-api</name>
   <url>http://maven.apache.org</url>
   <packaging>pom</packaging>
 
   <modules>
-    <module>cms</module>
-    <module>client</module>
+    <module>artech-cms-api</module>
+    <module>artech-client-api</module>
+    <module>artech-runtime-api</module>
   </modules>
+
+  <properties>
+        <compiler-plugin.version>3.13.0</compiler-plugin.version>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+        <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+        <quarkus.platform.version>3.13.0</quarkus.platform.version>
+        <skipITs>true</skipITs>
+        <surefire-plugin.version>3.2.5</surefire-plugin.version>
+    </properties>
+
 </project>
