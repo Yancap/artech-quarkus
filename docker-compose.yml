@@ -71,26 +71,26 @@ services:
     networks:
       - database_connection
       - artech_network
-    depends_on:
-      - mysql_artech
+    # depends_on:
+    #   - mysql_artech
     
 
-  mysql_artech:
-    container_name: mysql_artech
-    #image: mysql
-    build: 
-      context: ./mysql/
-      dockerfile: ./Dockerfile.mysql
-    environment:
-      # MYSQL_DATABASE: artech
-      MYSQL_ROOT_PASSWORD: root
-    ports:
-      - "3306:3306"
-    #volumes:
-      # - mysql-volume:/var/lib/mysql
-      #- ./mysql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
-    networks:
-      - database_connection
+  # mysql_artech:
+  #   container_name: mysql_artech
+  #   #image: mysql
+  #   build: 
+  #     context: ./mysql/
+  #     dockerfile: ./Dockerfile.mysql
+  #   environment:
+  #     # MYSQL_DATABASE: artech
+  #     MYSQL_ROOT_PASSWORD: root
+  #   ports:
+  #     - "3306:3306"
+  #   #volumes:
+  #     # - mysql-volume:/var/lib/mysql
+  #     #- ./mysql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+  #   networks:
+  #     - database_connection
   
   ngix_gateway:
     container_name: ngix_gateway
